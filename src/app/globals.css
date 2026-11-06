@@ -1,0 +1,166 @@
+@import "tailwindcss";
+
+:root {
+  color-scheme: light dark;
+  --paper: #f6f4ee;
+  --surface: #fffefa;
+  --ink: #1b1d1f;
+  --muted: #525457;
+  --line: #d9d6cc;
+  --accent: #1c5985;
+  --on-accent: #ffffff;
+  --danger: #b3261e;
+  --glow-a: rgb(70 150 205 / 0.22);
+  --glow-b: rgb(60 175 160 / 0.17);
+  --glow-c: rgb(235 165 95 / 0.17);
+  --dot: rgb(27 29 31 / 0.13);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #12161a;
+    --surface: #1a2026;
+    --ink: #eceae4;
+    --muted: #a8adb2;
+    --line: #2d343a;
+    --accent: #7cc0ec;
+    --on-accent: #0d1a24;
+    --danger: #ff8a80;
+    --glow-a: rgb(70 150 225 / 0.2);
+    --glow-b: rgb(45 185 165 / 0.13);
+    --glow-c: rgb(130 100 225 / 0.145);
+    --dot: rgb(236 234 228 / 0.1);
+  }
+}
+
+@theme inline {
+  --color-paper: var(--paper);
+  --color-surface: var(--surface);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-accent: var(--accent);
+  --color-on-accent: var(--on-accent);
+  --color-danger: var(--danger);
+  --font-serif: var(--font-source-serif), Georgia, serif;
+  --font-sans: var(--font-inter), system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, monospace;
+}
+
+html {
+  scroll-behavior: smooth;
+  scroll-padding-top: 2rem;
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Animated backdrop. Radial gradients and transforms stay smooth where a blur filter would not. */
+.bg-scene {
+  position: fixed;
+  inset: 0;
+  z-index: -10;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.bg-blob {
+  position: absolute;
+  width: 75vmax;
+  height: 75vmax;
+  border-radius: 50%;
+  will-change: transform;
+  /* Longhands on purpose: the production minifier reduces a shorthand with no name to `none`. */
+  animation-duration: 22s;
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+}
+
+.bg-blob-a {
+  top: -30vmax;
+  left: -20vmax;
+  background: radial-gradient(circle closest-side, var(--glow-a), transparent);
+  animation-name: drift-a;
+}
+
+.bg-blob-b {
+  right: -25vmax;
+  bottom: -35vmax;
+  background: radial-gradient(circle closest-side, var(--glow-b), transparent);
+  animation-name: drift-b;
+  animation-duration: 28s;
+}
+
+.bg-blob-c {
+  top: 15%;
+  right: -30vmax;
+  background: radial-gradient(circle closest-side, var(--glow-c), transparent);
+  animation-name: drift-c;
+  animation-duration: 34s;
+}
+
+.bg-dots {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(var(--dot) 1px, transparent 1.5px);
+  background-size: 28px 28px;
+  mask-image: linear-gradient(115deg, black, transparent 45%, transparent 60%, black);
+}
+
+@keyframes drift-a {
+  to {
+    transform: translate3d(38vmax, 22vmax, 0) scale(1.2);
+  }
+}
+
+@keyframes drift-b {
+  to {
+    transform: translate3d(-42vmax, -26vmax, 0) scale(0.9);
+  }
+}
+
+@keyframes drift-c {
+  to {
+    transform: translate3d(-48vmax, 18vmax, 0) scale(1.15);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .bg-blob {
+    animation: none;
+  }
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+@layer components {
+  .btn {
+    @apply inline-flex cursor-pointer items-center justify-center rounded px-4 py-2 text-sm font-medium transition-colors disabled:cursor-wait disabled:opacity-60;
+  }
+  .btn-primary {
+    @apply bg-accent text-on-accent hover:opacity-90;
+  }
+  .btn-secondary {
+    @apply border border-line text-ink hover:border-ink;
+  }
+  .field-label {
+    @apply mb-1.5 block text-sm font-medium text-ink;
+  }
+  .field-input {
+    @apply block w-full rounded border border-line bg-surface px-3 py-2 text-base text-ink placeholder:text-muted/70 sm:text-sm;
+  }
+  .field-input[aria-invalid="true"] {
+    border-color: var(--danger);
+  }
+}
