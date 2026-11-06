@@ -47,7 +47,9 @@ export async function saveUpload(file: File, kind: UploadKind): Promise<string> 
 
   const name = `${randomUUID()}.${type.ext}`;
 
-  if (process.env.BLOB_READ_WRITE_TOKEN) {
+  // A connected store supplies either a read-write token or OIDC credentials (BLOB_STORE_ID),
+  // depending on whether it was created with the project or connected to it afterwards.
+  if (process.env.BLOB_READ_WRITE_TOKEN || process.env.BLOB_STORE_ID) {
     const blob = await put(`uploads/${name}`, bytes, {
       access: "public",
       contentType: type.contentType,
